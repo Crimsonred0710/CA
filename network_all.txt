@@ -1,0 +1,716 @@
+
+1. Parity Bit Generator(even & odd) ----->
+
+#include <stdio.h>
+int main()
+{
+	int n;
+	printf("Enter the length of dataword: ");
+	scanf("%d", &n);
+	char ch[n + 1];
+	int i, c1 = 0, c;
+	printf("Enter the dataword: ");
+	scanf("%s", &ch);
+	printf("Enter your choice:\n");
+	printf("Enter 0 for even parity bit procedure\n");
+	printf("Enter 1 for odd parity bit procedure\n");
+	scanf("%d", &c);
+	for (i = 0; i < n; i++)
+		if (ch[i] == '1')
+			c1++;
+	switch (c)
+	{
+	case 0:
+		if (c1 % 2 != 0)
+			ch[n] = '1';
+		else
+			ch[n] = '0';
+		printf("%s", ch);
+		break;
+	case 1:
+		if (c1 % 2 != 0)
+			ch[n] = '0';
+		else
+			ch[n] = '1';
+		printf("%s", ch);
+		break;
+	default:
+		printf("Invalid choice");
+	}
+	return 0;
+}
+
+1. Parity Bit Checker(even & odd) ------->
+
+#include<stdio.h>
+#include<string.h>
+int main(){
+    char arr[1000];
+    char c;
+    printf("Enter the codeword--> ");
+    gets(arr);
+    printf("Enter the Parity Scheme (e for even and o for odd)-->");
+    scanf("%c",&c);
+    int n=strlen(arr),count=0;
+    for(int i=0;i<n;i++){
+        if(arr[i]=='1'){
+            count++;
+        }
+    }
+    if(c=='e'){
+        if(count%2==0){
+            printf("No error\n");
+            printf("DataWord is-->\n");
+            for(int i=0;i<n-1;i++){
+                printf("%c",arr[i]);
+            }
+        }
+        else{
+            printf("Error in Data!!!");
+        }
+    }
+    else{
+        if(count%2!=0){
+            printf("No error\n");
+            printf("DataWord is-->\n");
+            for(int i=0;i<n-1;i++){
+                printf("%c",arr[i]);
+            }
+        }
+        else{
+            printf("Error in Data!!!");
+        }
+    }
+}
+
+2. CRC bit generation  ----->
+
+
+#include <stdio.h>
+#include <string.h>
+int main()
+{
+	char dataword[1000], divisor[1000], store[1000];
+	printf("Enter the dataword-->");
+	gets(dataword);
+	printf("Enter the divisor-->");
+	gets(divisor);
+	int count = strlen(divisor), n = strlen(dataword), c = 0, p = 0;
+
+	for (int i = n; i < (n + count - 1); i++)
+	{
+		dataword[i] = '0';
+	}
+	for (int i = 0; i < (n + count - 1); i++)
+	{
+		store[i] = dataword[i];
+	}
+	for (int i = 0; i < n; i++)
+	{
+		if (dataword[i] == '1')
+		{
+			for (int j = i; j < (i + count); j++)
+			{
+				if (dataword[j] == divisor[p++])
+				{
+					dataword[j] = '0';
+				}
+				else
+				{
+					dataword[j] = '1';
+				}
+			}
+		}
+
+		p = 0;
+	}
+	for (int i = n; i < (n + count - 1); i++)
+	{
+		store[i] = dataword[i];
+	}
+	printf("\nThe final codeword is-->");
+	for (int i = 0; i < (n + count - 1); i++)
+	{
+		printf("%c", store[i]);
+	}
+	return 0;
+}
+
+2. crc reciever ------>
+
+#include <stdio.h>
+#include <string.h>
+int main()
+{
+	char dataword[1000], divisor[1000], store[1000];
+	printf("Enter the final codeword-->");
+	gets(dataword);
+	printf("Enter the divisor-->");
+	gets(divisor);
+	int count = strlen(divisor), n = strlen(dataword), c = 0, p = 0, flag = 1;
+
+	for (int i = 0; i < (n + count - 1); i++)
+	{
+		store[c++] = dataword[i];
+	}
+	for (int i = 0; i < n; i++)
+	{
+		if (dataword[i] == '0')
+		{
+			continue;
+		}
+		else
+		{
+			for (int j = i; j < (i + count); j++)
+			{
+				if (dataword[j] == divisor[p++])
+				{
+					dataword[j] = '0';
+				}
+				else
+				{
+					dataword[j] == '1';
+				}
+			}
+		}
+		p = 0;
+	}
+	for (int i = n; i < (n + count - 1); i++)
+	{
+		if (dataword[i] == '1')
+		{
+			flag = 0;
+			break;
+		}
+	}
+	if (flag == 1)
+	{
+		printf("\nNo error");
+		printf("\nThe dataword is-->");
+		for (int i = 0; i < (n - (count - 1)); i++)
+		{
+			printf("%c", store[i]);
+		}
+	}
+	else
+	{
+		printf("\nError in data");
+	}
+}
+
+3. checksum sender-----> 
+
+#include <stdio.h>
+#include <string.h>
+int isPower(int n)
+{
+	int c = 0;
+	while (n != 0)
+	{
+		n = (n & (n - 1));
+		c++;
+	}
+	if (c == 1)
+	{
+		return 1;
+	}
+	return 0;
+}
+int main()
+{
+	char dataword[1000], store[1000];
+	int sl, newlen, l = 0;
+
+	printf("Enter the Dataword-->");
+	gets(dataword);
+	int len = strlen(dataword);
+	do
+	{
+		printf("Enter the segment length-->");
+		scanf("%d", &sl);
+	} while (isPower(sl) == 0);
+
+	int sum[100];
+	for (int i = 0; i < sl; i++)
+	{
+		sum[i] = 0;
+	}
+	if (len % sl != 0)
+	{
+		int i, diff = (sl - (len % sl));
+		for (int i = 0; i < diff; i++)
+		{
+			store[i] = '0';
+		}
+		store[i] = '\0';
+		l = strlen(store);
+		strcat(store, dataword);
+		strcpy(dataword, store);
+		newlen = strlen(store);
+	}
+	newlen = len;
+	printf("Dataword after padding-->");
+	for (int i = 0; i < newlen; i++)
+	{
+		printf("%c", dataword[i]);
+	}
+	for (int i = 0; i < newlen; i += sl)
+	{
+		int c = 0, p = sl - 1;
+		for (int j = (sl + i - 1); j >= i; j--)
+		{
+			int s = sum[p];
+			sum[p] = ((dataword[j] - '0') + sum[p] + c) % 2;
+			c = (c + (dataword[j] - '0') + s) / 2;
+			p--;
+		}
+		if (c == 1)
+		{
+			for (int k = sl - 1; k >= 0; k--)
+			{
+				int s = sum[k];
+				sum[k] = (sum[k] + c) % 2;
+				c = (c + s) / 2;
+			}
+		}
+	}
+	printf("\nCheckSum Bits-->");
+	for (int i = 0; i < sl; i++)
+	{
+		if (sum[i] == 0)
+		{
+			printf("%d", 1);
+		}
+		else
+		{
+			printf("%d", 0);
+		}
+	}
+	printf("\nFinal Codeword-->");
+	for (int i = len + 1; i <= (len + sl); i++)
+	{
+		if (sum[i - len - 1] == 0)
+		{
+			dataword[i] = '1';
+		}
+		else
+		{
+			dataword[i] = '0';
+		}
+	}
+	for (int i = l; i <= (len + sl); i++)
+	{
+		printf("%c", dataword[i]);
+	}
+	return 0;
+}
+
+/* 
+Enter the Dataword-->11001100101010101111000011000011
+Enter the segment length-->4
+Dataword after padding-->11001100101010101111000011000011
+CheckSum Bits-->0001
+Final Codeword-->11001100101010101111000011000011 0001
+ */
+
+
+
+
+3. checksum reciever------->
+
+
+#include <stdio.h>
+#include <string.h>
+int isPower(int n)
+{
+    int c = 0;
+    while (n != 0)
+    {
+        n = (n & (n - 1));
+        c++;
+    }
+    if (c == 1)
+    {
+        return 1;
+    }
+    return 0;
+}
+int main()
+{
+    char dataword[1000], store[1000];
+    int sl, newlen, l = 0;
+
+    printf("Enter the Dataword-->");
+    gets(dataword);
+    int len = strlen(dataword);
+    do
+    {
+        printf("Enter the segment length-->");
+        scanf("%d", &sl);
+    } while (isPower(sl) == 0);
+
+    int sum[100];
+    for (int i = 0; i < sl; i++)
+    {
+        sum[i] = 0;
+    }
+    if (len % sl != 0)
+    {
+        int i, diff = (sl - (len % sl));
+        for (int i = 0; i < diff; i++)
+        {
+            store[i] = '0';
+        }
+        store[i] = '\0';
+        l = strlen(store);
+        strcat(store, dataword);
+        strcpy(dataword, store);
+        newlen = strlen(store);
+    }
+    newlen = len;
+    printf("Dataword after padding-->");
+    for (int i = 0; i < newlen; i++)
+    {
+        printf("%c", dataword[i]);
+    }
+    for (int i = 0; i < newlen; i += sl)
+    {
+        int c = 0, p = sl - 1;
+        for (int j = (sl + i - 1); j >= i; j--)
+        {
+            int s = sum[p];
+            sum[p] = ((dataword[j] - '0') + sum[p] + c) % 2;
+            c = (c + (dataword[j] - '0') + s) / 2;
+            p--;
+        }
+        if (c == 1)
+        {
+            for (int k = sl - 1; k >= 0; k--)
+            {
+                int s = sum[k];
+                sum[k] = (sum[k] + c) % 2;
+                c = (c + s) / 2;
+            }
+        }
+    }
+    int flag = 0;
+    printf("\nCheckSum Bits-->");
+    for (int i = 0; i < sl; i++)
+    {
+        if (sum[i] == 0)
+        {
+            printf("%d", 1);
+            sum[i] = 1;
+        }
+        else
+        {
+            printf("%d", 0);
+            sum[i] = 0;
+        }
+    }
+    for (int i = 0; i < sl; i++)
+    {
+        if (sum[i] == 1)
+        {
+            flag = 1;
+            break;
+        }
+    }
+    if (flag == 1)
+    {
+        printf("\nError in Data!!");
+    }
+    else
+    {
+        printf("\nNo error in data");
+    }
+    return 0;
+}
+
+/*
+Enter the Dataword-->11001100101010101111000011000011
+Enter the segment length-->4
+Dataword after padding-->11001100101010101111000011000011
+CheckSum Bits-->0001
+Error in Data!!
+
+*/
+
+
+4.Hamming code sender---- >
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+/*
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+*/
+
+int main(int x, char* argv[]) {
+//	char buf[100];
+
+	// *************START  CODE FOR hamming SENDER ************//
+	char data[100];
+	int data1[100],data2[100];
+	int dl,r,i,j,k,z,c;
+
+	
+	while(1) {
+
+	
+	printf("\n entr the data \n");	
+	scanf("%s",data);
+
+	dl=strlen(data);
+	i=0;
+	while(1)
+	{
+		if(pow(2,i)>=i+dl+1)
+			break;
+		i++;	
+	}
+	r=i;
+	printf("\n r is %d \n",r);
+	for(i=0;i<dl;i++)
+	{
+		data1[i]=data[i]-48;    
+	}
+	for(i=0;i<r;i++)
+		{
+			z=pow(2,i);
+			data2[z]=999;
+		}
+		j=0;
+	for(i=dl+r;i>=1;i--)
+	{
+		if(data2[i]!=999){
+			data2[i]=data1[j];
+			j++;
+			}    
+	}
+	
+	for(i=0;i<r;i++)
+	{
+		z=pow(2,i);
+		c=0;
+		for(j=z;j<=dl+r;j=z+k)
+		{
+			for(k=j;k<z+j;k++)
+			{
+				if(k<=r+dl)
+				if(data2[k]!=999)
+					c=c+data2[k];
+			}
+		}
+		data2[z]=c%2;
+	}
+	
+	printf("\n printf code word is: \n");
+	j=0;
+
+	for(i=dl+r;i>=1;i--){
+		printf("%d ",data2[i]);
+	//	buf[j]=data2[i]+48;
+		j++;
+	}
+//	buf[j]='\0';
+//	printf("\nCodeword in buf: %s ",buf);
+}
+
+	return 0;
+}
+
+
+4. haming code reciever ------->
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+
+
+int main(int x, char * argv[]) {
+	
+//************** parity client code start *************
+
+	char data[100];
+	int data1[100],data2[100];
+	int dl,r,i,j,k,z,c,l;
+	
+	printf("\n entr CODEWORD \n");	
+	scanf("%s",data);
+	
+	dl=strlen(data);
+	i=0;
+	while(1)
+	{
+		if(pow(2,i)>=dl+1)
+			break;
+		i++;	
+	}
+	r=i;
+	
+	j=dl-1;
+	for(i=1;i<=dl;i++)
+	{
+		data1[i]=data[j]-48;
+		j--;    
+	}
+	
+	l=1;
+	data2[0]=0;
+	for(i=0;i<r;i++)
+	{
+		z=pow(2,i);
+		c=0;
+		for(j=z;j<=dl;j=z+k)
+		{
+			for(k=j;k<z+j;k++)
+			{
+				if(k<=dl)
+					c=c+data1[k];
+			}
+		}
+		data2[l]=c%2;
+		data2[0]=data2[0]+data2[l];
+		l++;
+	}
+		
+	if(data2[0]==0)
+		{
+			printf("\n data recv ok \n");
+
+		}
+	else
+		{
+			printf("\n data recv wrong \n");	
+			j=0;
+			for(i=r;i>=1;i--)
+			{
+				if(data2[i]==1)
+				j=j+pow(2,(i-1));
+			}
+			printf("\n error at position %d",j);
+			if(data1[j]==0)
+				data1[j]=1;
+			else
+				data1[j]=0;
+			printf("\n corrected codeword is: ");
+			for(i=dl;i>=1;i--)
+				printf("%d ",data1[i]);
+			printf("\n");
+		}
+
+	return(0);
+}
+
+*/
+  entr CODEWORD 
+1010010
+
+ data recv ok 
+*/
+
+
+5. socket program TCP server ------>
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+//server
+int main(int x, char* argv[]) {
+	char buf[100],data[100];
+	memset(buf,'\0',100);
+	struct sockaddr_in server, client;
+	int s_check, c_check;
+
+	int flag, len, bit;
+
+	s_check = socket(AF_INET, SOCK_STREAM, 0);
+	
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = INADDR_ANY;
+	server.sin_port = htons(atoi(argv[1]));
+
+	bind(s_check, (struct sockaddr*)&server, sizeof(server));
+	
+	listen(s_check, 1);
+	
+	int size = sizeof(client);	
+	c_check = accept(s_check, (struct sockaddr*)&client, &size);
+	
+	memset(buf,'\0',100);
+	printf("Enter the string:");
+	scanf("%s",data);		
+	strcpy(buf,data);
+	send(c_check, buf, 100, 0);
+	
+
+//	printf("\nClient IP address is: %s\n", inet_ntoa(client.sin_addr));
+	memset(buf,'\0',100);		
+	recv(c_check, buf, 100, 0);
+	printf("\nRecieved data is  : %s\n", buf);
+	close(c_check);
+	
+	close(s_check);
+
+return(0);
+}
+
+
+5. Tcp client ----->
+
+
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include<stdlib.h>
+
+//client
+int main(int x, char * argv[]) {
+	struct sockaddr_in client;
+	int c_check;
+	char buf[100],data[100];
+	
+	memset(buf, '\0', 100);
+	memset(data, '\0', 100);
+	
+	c_check = socket(AF_INET, SOCK_STREAM, 0);
+	
+	client.sin_family = AF_INET;
+	client.sin_addr.s_addr = inet_addr(argv[1]);
+	client.sin_port = htons(atoi(argv[2]));
+	memset(buf,'\0',100);
+	connect(c_check, (struct sockaddr*)&client, sizeof(client));	
+
+	recv(c_check, buf, 100, 0);
+	printf("\n codeword recv from sender is %s \n",buf);
+	printf("Enter the string :");
+	memset(buf,'\0',100);
+	scanf("%s",buf);
+	send(c_check, buf, 100, 0);	
+	close(c_check);
+
+return(0);
+}
+
+
+
